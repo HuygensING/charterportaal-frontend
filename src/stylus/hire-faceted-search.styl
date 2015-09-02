@@ -1,0 +1,129 @@
+@require 'mixins';
+@require 'colors';
+
+
+.hire-faceted-search
+	width 100%
+	padding 0
+
+.hire-faceted-search > .hire-faceted-search-results
+	padding-top 67px
+
+li.hire-faceted-search-text-search input
+	width 92%
+	-webkit-appearance: none;
+	border 1px solid rgb(221,221,221)
+	border-right 0
+	border-radius 4px 0 0 4px
+	background-color #fff
+	float left
+
+li.hire-faceted-search-text-search .search-icon
+	width 8%
+	float right
+	border 1px solid rgb(221,221,221)
+	border-left 0
+	border-radius 0 4px 4px 0
+
+
+li.hire-faceted-search-text-search .search-icon .center-vertical svg
+	fill #ddd
+
+
+.hire-faceted-search > .hire-faceted-search-facets
+	width 450px
+
+.hire-faceted-search > .hire-faceted-search-results
+	width calc(100% - 450px)
+	padding-left 60px
+
+.hire-faceted-search-results-sort-menu > button
+	background-color #eee
+	border none
+	padding 6px
+	height 28px
+	cursor pointer
+	&:after
+		content " ▼"
+
+.hire-faceted-search-results-sort-menu > ul 
+	background-color #eee
+
+.hire-faceted-search-results-sort-menu > ul > li
+	padding 6px
+	border-bottom 1px solid #fff
+
+
+
+li.hire-list-facet
+	padding 0
+
+li.hire-list-facet > header > h3
+	font-weight normal
+	font-style italic
+
+.hire-faceted-search-filter-menu > .hire-input
+	width 100%
+
+li.hire-faceted-search-text-search .search-icon .center-vertical
+	-webkit-align-items center
+	display -webkit-flex
+
+.hire-faceted-search-filter-menu > .hire-input > input
+	border 1px solid rgb(221,221,221)
+	border-radius 4px
+	background-color #fff
+	-webkit-appearance: none;
+
+.hire-faceted-search-results > header > .hire-faceted-search-results-sort-menu, .hire-faceted-search-results > header > .hire-faceted-search-results-rows
+	float right
+
+.hire-faceted-search-results > header
+	border none
+
+.hire-faceted-search-results > ul > li
+	background-color rgb(250,250,250)
+	border-radius 4px
+	border 1px solid rgb(230,230,230)
+	padding 15px 20px
+
+.hire-faceted-search-results > ul > li:hover
+	border 1px solid rgb(180,180,180)
+
+.hire-faceted-search-results > ul.hire-faceted-search-pagination > li
+	background-color #fff
+	border none
+	padding 0
+
+
+
+li.hire-list-facet.show-all
+	padding-left 0
+
+
+li.hire-list-facet > ul > li.hire-list-facet-list-item label
+	font-size 12px
+
+li.hire-list-facet > ul > li.hire-list-facet-list-item svg.checked path:last-child
+	fill $blue
+
+
+svg.loader, 
+.search .hire-faceted-search-results svg.loader
+	fill $blue
+	height 1%
+	width 10%
+
+
+.hire-faceted-search-results > ul > li
+	cursor: default;
+
+.hire-faceted-search > .hire-faceted-search-facets > button
+	button(4px)
+
+.hire-faceted-search-results > ul > li > label
+	font-weight 400
+	fint-size 14px
+	display inline-block
+	width 80%
+

@@ -1,0 +1,55 @@
+@require 'mixins';
+
+.result-date
+	float right
+	margin-right 
+	display inline-block
+	text-align right
+	width 20%
+
+
+.hire-faceted-search-result-list button,
+.hire-faceted-search-result-list a.button
+	button(4px)
+	margin-top 12px
+	margin-bottom 0
+	padding-bottom 30px
+	color #000
+	font-weight 300
+
+.more-info
+	margin-top 12px
+
+.more-info .metadata
+	display inline-block
+	width calc(70% - 20px)
+	margin-left 20px
+	vertical-align top
+
+.more-info
+	max-height 0
+	transition max-height 0.6s
+	overflow hidden
+
+.hire-faceted-search-result-list .more-info-opened .button
+	display none
+
+.more-info-opened
+	transition opacity 0.4s
+
+.more-info-opened .more-info
+	max-height 500px
+
+.more-info .metadata li
+	margin-bottom 6px
+
+.more-info .metadata li a
+	color #019dd6
+	font-style italic
+
+.more-info img
+	width 30%
+	border-radius 6px
+
+.child-is-open .hire-faceted-search-result-list > li:not(.more-info-opened)
+	opacity 0.3
