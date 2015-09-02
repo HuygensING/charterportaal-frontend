@@ -3,6 +3,8 @@
 var browserSync = require("browser-sync").create();
 var modRewrite = require("connect-modrewrite");
 var debounce = require("lodash.debounce");
+var proxy = require("proxy-middleware");
+var url = require('url');
 
 var baseDir = "./build/development";
 var watchFiles = [
@@ -17,15 +19,18 @@ var onFilesChanged = function(event, file) {
 	}
 };
 
+var proxyOptions = url.parse("https://test.repository.huygens.knaw.nl");
+proxyOptions.route = "/repository/api";
+
 browserSync.watch(watchFiles, debounce(onFilesChanged, 300));
 
 browserSync.init({
 	server: {
 		baseDir: baseDir,
-		middleware: modRewrite([
+		middleware: [proxy(proxyOptions), modRewrite([
 			"^/charterportaal/css/(.*)$ /css/$1 [L]",
 			"^/charterportaal/js/(.*).js$ /js/$1.js [L]",
 			"^/charterportaal/?.*$ /index.html [L]"
-		])
+		])]
 	}
 });

@@ -48,10 +48,10 @@ class Search extends React.Component {
 		this.renderedSearch = this.renderedSearch || 
 			<FacetedSearch
 					config={{
-						baseURL: "https://acc.repository.huygens.knaw.nl/v2",
+						baseURL: "/repository/api/v2.1",
 						searchPath: "/search/wwdocuments",
 						levels: ["dynamic_sort_creator", "dynamic_sort_title"],
-						headers: {VRE_ID: "WomenWriters"}
+						headers: {VRE_ID: "WomenWriters", Accept: "application/json"}
 					}}
 					facetList={[
 						"dynamic_s_creator",
