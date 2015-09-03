@@ -21,6 +21,7 @@ var onFilesChanged = function(event, file) {
 
 var proxyOptions = url.parse("https://acc.repository.huygens.knaw.nl");
 proxyOptions.route = "/repository/api";
+proxyOptions.via = true;
 
 browserSync.watch(watchFiles, debounce(onFilesChanged, 300));
 
