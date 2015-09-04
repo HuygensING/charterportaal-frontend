@@ -4,15 +4,9 @@ import Result from "./result";
 
 const labels = {
 	facetTitles: {
-		"dynamic_s_creator": "Auteur",
 		"dynamic_sort_creator": "Auteur",
 		"dynamic_sort_title": "Titel",
-		"dynamic_s_origin": "Land",
-		"dynamic_s_genre": "Genre",
-		"dynamic_s_language": "Taal",
-		"createdBy": "Auteur",
-		"language": "Taal",
-		"date": "Datum"
+		"dynamic_i_date": "Datum"
 	},
 	"resultsFound": "resultaten",
 	"sortBy": "Sorteer op",
@@ -48,24 +42,14 @@ class Search extends React.Component {
 		this.renderedSearch = this.renderedSearch || 
 			<FacetedSearch
 					config={{
-						baseURL: "/repository/api/v2",
-						searchPath: "/search/wwdocuments",
+/*						baseURL: "/repository/api/v2.1",*/
+						baseURL: "https://test.repository.huygens.knaw.nl/v2.1",
+						searchPath: "/search/charterdocuments",
 						levels: ["dynamic_sort_creator", "dynamic_sort_title"],
-						headers: {VRE_ID: "WomenWriters", Accept: "application/json"}
+						headers: {VRE_ID: "Charter", Accept: "application/json"}
 					}}
-					facetList={[
-						"dynamic_s_creator",
-						"dynamic_s_origin",
-						"dynamic_s_language",
-						"dynamic_s_genre"
-					]}
+					facetList={["dynamic_i_date"]}
 					labels={labels}
-					metadataList={[
-						"createdBy",
-						"publishLocation",
-						"language",
-						"date"
-					]}
 					onChange={this.onChange.bind(this)}
 					onSelect={this.onSelect.bind(this)}
 					resultComponent={Result}

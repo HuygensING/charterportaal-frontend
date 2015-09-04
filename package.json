@@ -20,7 +20,7 @@
     "hire-faceted-search": "^3.5.0",
     "lodash.debounce": "^3.1.1",
     "nib": "~1.1.0",
-    "proxy-middleware": "^0.13.1",
+    "proxy-middleware": "^0.14.0",
     "stylus": "~0.52.0",
     "watchify": "~3.3.1"
   },
@@ -28,7 +28,7 @@
     "ampersand-router": "^3.0.2",
     "classnames": "^2.1.3",
     "flux": "~2.0.3",
-    "hire-faceted-search": "^3.5.3",
+    "hire-faceted-search": "^3.6.0",
     "react": "~0.13.3",
     "xhr": "~2.0.3"
   }
