@@ -42,7 +42,7 @@ class Search extends React.Component {
 		this.renderedSearch = this.renderedSearch || 
 			<FacetedSearch
 					config={{
-						baseURL: "/repository/api/v2",
+						baseURL: "http://test.repository.huygens.knaw.nl/v2.1",
 						searchPath: "/search/charterdocuments",
 						levels: ["dynamic_sort_creator", "dynamic_sort_title"],
 						headers: {VRE_ID: "Charter", Accept: "application/json"}
