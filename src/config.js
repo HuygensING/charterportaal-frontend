@@ -1,4 +1,4 @@
-let baseUrl = "/repository/api/v2";
+let baseUrl = "https://test.repository.huygens.knaw.nl/v2.1";
 
 export default {
 	baseUrl: baseUrl,
