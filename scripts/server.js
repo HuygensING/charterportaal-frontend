@@ -19,7 +19,7 @@ var onFilesChanged = function(event, file) {
 	}
 };
 
-var proxyOptions = url.parse("https://test.repository.huygens.knaw.nl");
+var proxyOptions = url.parse("http://test.repository.huygens.knaw.nl");
 proxyOptions.route = "/repository/api";
 proxyOptions.via = true;
 
