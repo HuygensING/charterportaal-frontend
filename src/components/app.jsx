@@ -25,11 +25,6 @@ class App extends React.Component {
 
 	handleLoginChange(response) {
 		if (response.authenticated && response.token != null) {
-			console.log({
-				displayName: response.userData.displayName,
-				email: response.userData.email,
-				token: response.token
-			});
 			appStore.dispatch(receiveUser({
 				displayName: response.userData.displayName,
 				email: response.userData.email,
@@ -48,8 +43,8 @@ class App extends React.Component {
 					<h1>Charterportaal</h1>
 					<div>
 						<Login
-							appId="WomenWriters"
-							headers={{VRE_ID: "WomenWriters"}}
+							appId="Charter"
+							headers={{VRE_ID: "Charter"}}
 							onChange={this.handleLoginChange.bind(this)}
 							userUrl={config.userUrl}>
 							<Federated url={config.federatedAuthenticateUrl} />

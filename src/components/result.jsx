@@ -34,10 +34,18 @@ class Result extends React.Component {
 		}, this.props.onSelect.bind(data));
 	}
 
+
+	toggleMoreInfo(data) {
+		this.setState({
+			moreInfoOpen: !this.state.moreInfoOpen
+		}, this.props.onSelect.bind(data));
+	}
+
+
 	render() {
 		return (
 			<li className={this.state.moreInfoOpen ? "more-info-opened" : null}>
-				<label onClick={this.toggleMoreInfo.bind(this, this.props.data)}>{this.props.data.data["^displayName"]}</label>
+				<label onClick={this.toggleMoreInfo.bind(this, this.props.data)}>{this.props.data.displayName}</label>
 				<span className="result-date">
 					{this.props.data.data.date}
 				</span>
