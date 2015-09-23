@@ -1,5 +1,5 @@
 import React from "react";
-import FacetedSearch from "hire-faceted-search";
+import FacetedSearch from "hire-faceted-search-bridge";
 import Result from "./result";
 
 const labels = {
