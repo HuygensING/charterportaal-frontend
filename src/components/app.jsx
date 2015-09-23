@@ -13,11 +13,20 @@ class App extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = appStore.getState();
+		this.requestEntryNavigation = null;
 	}
+
 	componentDidMount() {
 		this.unsubscribe = appStore.subscribe(() =>
 			this.setState(appStore.getState())
 		);
+	}
+
+	componentWillUpdate(nextProps, nextState) {
+		if(this.requestEntryNavigation) {
+			router.navigate(this.requestEntryNavigation);
+			this.requestEntryNavigation = null;
+		}
 	}
 
 	componentWillUnmount() {
@@ -37,6 +46,7 @@ class App extends React.Component {
 	handleEditNavigation(data) {
 		if(this.state.user && this.state.user.token) {
 			appStore.dispatch(selectEntry(data));
+			this.requestEntryNavigation = data.id + "/edit";
 		}
 	}
 
@@ -45,6 +55,7 @@ class App extends React.Component {
 	}
 
 	render() {
+		console.log(this.state);
 		return (
 			<div>
 				<header>
