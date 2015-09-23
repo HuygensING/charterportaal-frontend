@@ -3,7 +3,7 @@ import {receiveUser} from "../actions/user";
 import {selectEntry} from "../actions/entry";
 import appStore from "../app-store";
 import React from "react";
-import {Login, Federated} from "hire-login";
+import {Login, Federated, Basic} from "hire-login";
 import Search from "./search";
 import Edit from "./edit";
 import router from "../router";
@@ -40,6 +40,13 @@ class App extends React.Component {
 				email: response.userData.email,
 				token: response.token
 			}));
+		} else {
+			appStore.dispatch(receiveUser({
+				displayName: null,
+				email: null,
+				token: null
+			}));
+
 		}
 	}
 
@@ -69,6 +76,7 @@ class App extends React.Component {
 							onChange={this.handleLoginChange.bind(this)}
 							userUrl={config.userUrl}>
 							<Federated url={config.federatedAuthenticateUrl} />
+							<Basic url={config.basicAuthenticateUrl} />
 						</Login>
 					</div>
 					<h1>Charterportaal</h1>
