@@ -43,6 +43,7 @@ class Result extends React.Component {
 
 
 	render() {
+		console.log(this.props.data);
 		return (
 			<li className={this.state.moreInfoOpen ? "more-info-opened" : null}>
 				<label onClick={this.toggleMoreInfo.bind(this, this.props.data)}>{this.props.data.displayName}</label>

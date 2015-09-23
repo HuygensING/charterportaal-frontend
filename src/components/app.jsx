@@ -50,6 +50,7 @@ class App extends React.Component {
 						</Login>
 					</div>
 					<h1>Charterportaal</h1>
+					<small>using <b style={{color: "blue"}}>test</b> Timbuctoo <b style={{color:"red"}}>api V2</b> with hire-faceted-search<b style={{color:"red"}}>-bridge-apiv2-apiv2.1</b></small>
 				</header>
 				<div className="search">
 					<Search user={this.state.user} />
