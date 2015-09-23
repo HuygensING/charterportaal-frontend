@@ -1,17 +1,18 @@
 import config from "../config";
 import {receiveUser} from "../actions/user";
+import {selectEntry} from "../actions/entry";
 import appStore from "../app-store";
 import React from "react";
 import {Login, Federated} from "hire-login";
 import Search from "./search";
+import Edit from "./edit";
+import router from "../router";
 
 class App extends React.Component {
 
 	constructor(props) {
 		super(props);
-		this.state = {
-			user: null
-		};
+		this.state = appStore.getState();
 	}
 	componentDidMount() {
 		this.unsubscribe = appStore.subscribe(() =>
@@ -31,6 +32,16 @@ class App extends React.Component {
 				token: response.token
 			}));
 		}
+	}
+
+	handleEditNavigation(data) {
+		if(this.state.user && this.state.user.token) {
+			appStore.dispatch(selectEntry(data));
+		}
+	}
+
+	navigateToSearch() {
+		router.navigate("/search");
 	}
 
 	render() {
@@ -53,10 +64,10 @@ class App extends React.Component {
 					<small>using <b style={{color: "blue"}}>test</b> Timbuctoo <b style={{color:"red"}}>api V2</b> with hire-faceted-search<b style={{color:"red"}}>-bridge-apiv2-apiv2.1</b></small>
 				</header>
 				<div className="search">
-					<Search user={this.state.user} />
+					<Search onEditClick={this.handleEditNavigation.bind(this)} user={this.state.user} />
 				</div>
-				<div className="edit">
-					edit here
+				<div className="edit-entry">
+					<Edit data={this.state.entry} onBackClick={this.navigateToSearch.bind(this)} user={this.state.user} />
 				</div>
 			</div>
 		)

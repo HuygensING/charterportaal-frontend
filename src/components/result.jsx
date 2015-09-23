@@ -35,15 +35,12 @@ class Result extends React.Component {
 	}
 
 
-	toggleMoreInfo(data) {
-		this.setState({
-			moreInfoOpen: !this.state.moreInfoOpen
-		}, this.props.onSelect.bind(data));
+	onEditClick(data) {
+		this.props.onSelect({...data, editThisRecord: true});
 	}
 
 
 	render() {
-		console.log(this.props.data);
 		return (
 			<li className={this.state.moreInfoOpen ? "more-info-opened" : null}>
 				<label onClick={this.toggleMoreInfo.bind(this, this.props.data)}>{this.props.data.displayName}</label>
@@ -65,7 +62,7 @@ class Result extends React.Component {
 				<a className="button" href="http://example.com" target="_blank">
 					Ga naar archief
 				</a>
-				<a className="button edit">
+				<a className="button edit" onClick={this.onEditClick.bind(this, this.props.data)} >
 					Bewerken
 				</a>
 			</li>

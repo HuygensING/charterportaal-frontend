@@ -1,8 +1,10 @@
-let baseUrl = "https://test.repository.huygens.knaw.nl/v2.1";
+let baseUrl = "https://test.repository.huygens.knaw.nl/v2";
 
 export default {
 	baseUrl: baseUrl,
+	entryUrl: baseUrl + "/domain/charterdocuments",
 	federatedAuthenticateUrl: "https://secure.huygens.knaw.nl/saml2/login",
 	basicAuthenticateUrl: baseUrl + "/authenticate",
-	userUrl: baseUrl + "/system/users/me"
+	userUrl: baseUrl + "/system/users/me",
+	vreId: "Charter"
 };

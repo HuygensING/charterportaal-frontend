@@ -1,9 +1,11 @@
 import Router from "ampersand-router";
 import React from "react";
 import Search from "./components/search";
+import {selectEntry} from "./actions/entry";
+import appStore from "./app-store";
 
 let showPage = function(page) {
-	[".search", ".edit"].forEach((pageClass) =>
+	[".search", ".edit-entry"].forEach((pageClass) =>
 		document.querySelector(pageClass).style.display = (page === pageClass) ? "block" : "none"
 	);
 };
@@ -20,7 +22,10 @@ let AppRouter = Router.extend({
 	},
 
 	edit: function(id) {
-		showPage(".edit");
+		if(appStore.getState().entry.data === null) {
+			appStore.dispatch(selectEntry({id : id}));
+		}
+		showPage(".edit-entry");
 	}
 
 });

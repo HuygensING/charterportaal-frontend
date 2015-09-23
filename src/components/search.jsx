@@ -1,6 +1,7 @@
 import React from "react";
 import FacetedSearch from "hire-faceted-search-bridge";
 import Result from "./result";
+import config from "../config";
 
 const labels = {
 	facetTitles: {
@@ -27,10 +28,14 @@ class Search extends React.Component {
 	}
 
 	onSelect(data) {
-		if(document.querySelector(".more-info-opened")) {
-			this.setState({childIsOpen: true});
+		if(data && data.editThisRecord) {
+			this.props.onEditClick(data);
 		} else {
-			this.setState({childIsOpen: false});
+			if(document.querySelector(".more-info-opened")) {
+				this.setState({childIsOpen: true});
+			} else {
+				this.setState({childIsOpen: false});
+			}
 		}
 	}
 
@@ -42,7 +47,7 @@ class Search extends React.Component {
 		this.renderedSearch = this.renderedSearch || 
 			<FacetedSearch
 					config={{
-						baseURL: "https://test.repository.huygens.knaw.nl/v2",
+						baseURL: config.baseUrl,
 						searchPath: "/search/charterdocuments",
 						levels: ["dynamic_sort_creator", "dynamic_sort_title"],
 						headers: {VRE_ID: "Charter", Accept: "application/json"}
@@ -57,13 +62,18 @@ class Search extends React.Component {
 
 	render() {
 		return (
-			<div className={(this.state.childIsOpen ? "child-is-open " : "") + (this.props.user ? "editable " : "") }>
+			<div className={(this.state.childIsOpen ? "child-is-open " : "") + (this.props.user && this.props.user.token ? "editable " : "") }>
 				{this.renderSearch()}
 			</div>
 		);
 	}
 
 
+}
+
+Search.propTypes = {
+	user: React.PropTypes.object,
+	onEditClick: React.PropTypes.func.isRequired
 }
 
 export default Search;
