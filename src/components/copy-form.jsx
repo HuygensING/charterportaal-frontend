@@ -32,13 +32,13 @@ class CopyForm extends React.Component {
 	render() {
 		return (
 			<div>
-				<div style={{display: "inline-block", maxWidth: "300px"}}>
+				<div className="autocomplete-wrapper">
 					<Autocomplete
 						async={getDocumentSuggest}
 						onChange={this.handleChange.bind(this)}
 						value={this.state.relation} />
 				</div>
-				<button onClick={this.handleSubmit.bind(this)} style={{verticalAlign: "top"}}>Toevoegen</button>
+				<button className="autocomplete-button" onClick={this.handleSubmit.bind(this)} style={{verticalAlign: "top"}}>Toevoegen</button>
 			</div>
 		);
 	}

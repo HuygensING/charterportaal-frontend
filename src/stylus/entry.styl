@@ -1,5 +1,37 @@
-require('colors')
+@require 'colors'
+@require 'mixins'
+
 
 .entry a
 	font-style italic
 	color $blue
+
+.autocomplete-wrapper
+	max-width calc(100% - 120px)
+	display inline-block
+
+.autocomplete-button
+	button(4px)
+	width 100px
+	vertical-align top
+
+.autocomplete-wrapper input
+	input()
+	min-width 630px
+	height 35px
+
+
+.autocomplete-wrapper ul
+	background-color #fff
+	border-radius 0 4px 4px 4px
+	border 1px solid rgb(221,221,221)
+	border-top none
+	margin-bottom 10px
+	padding-top 0
+
+.autocomplete-wrapper ul li
+	cursor pointer
+	padding-left 20px
+	padding-right 20px
+	&:hover
+		background-color $blue
