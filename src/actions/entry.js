@@ -29,8 +29,7 @@ let findRelationType = function(name, callback) {
 		let data = JSON.parse(body);
 		callback(data.find((relType) => relType.regularName === name)._id);
 	});
- //"RELT000000000033"
-}
+ }
 
 let addIsCopyOf = function(id, targetId, token, callback) {
 	findRelationType("isCopiedBy", function(typeId) {
@@ -62,7 +61,6 @@ let addIsCopyOf = function(id, targetId, token, callback) {
 export function selectEntry(data) {
 	return function(dispatch) {
 		fetchEntry(data.id, (respData) => {
-			router.navigate(data.id + "/edit");
 			dispatch({
 				type: "SELECT_ENTRY",
 				data: respData

@@ -14,17 +14,18 @@ let AppRouter = Router.extend({
 	routes: {
 		'': 'search',
 		'search': 'search',
-		":id/edit": 'edit'
+		"entry/:id": 'entry'
 	},
 
 	search: function() {
 		showPage(".search");
 	},
 
-	edit: function(id) {
+	entry: function(id) {
 		if(appStore.getState().entry.data === null) {
 			appStore.dispatch(selectEntry({id : id}));
 		}
+		console.log("HELLo?")
 		showPage(".edit-entry");
 	}
 

@@ -5,7 +5,7 @@ import appStore from "../app-store";
 import React from "react";
 import {Login, Federated, Basic} from "hire-login";
 import Search from "./search";
-import Edit from "./edit";
+import Entry from "./entry";
 import router from "../router";
 
 class App extends React.Component {
@@ -51,10 +51,8 @@ class App extends React.Component {
 	}
 
 	handleEditNavigation(data) {
-		if(this.state.user && this.state.user.token) {
-			appStore.dispatch(selectEntry(data));
-			this.requestEntryNavigation = data.id + "/edit";
-		}
+		appStore.dispatch(selectEntry(data));
+		this.requestEntryNavigation = "entry/" + data.id ;
 	}
 
 	navigateToSearch() {
@@ -76,17 +74,16 @@ class App extends React.Component {
 							onChange={this.handleLoginChange.bind(this)}
 							userUrl={config.userUrl}>
 							<Federated url={config.federatedAuthenticateUrl} />
-							<Basic url={config.basicAuthenticateUrl} />
 						</Login>
 					</div>
 					<h1>Charterportaal</h1>
 					<small>using <b style={{color: "blue"}}>test</b> Timbuctoo <b style={{color:"red"}}>api V2</b> with hire-faceted-search<b style={{color:"red"}}>-bridge-apiv2-apiv2.1</b></small>
 				</header>
 				<div className="search">
-					<Search onEditClick={this.handleEditNavigation.bind(this)} user={this.state.user} />
+					<Search onViewClick={this.handleEditNavigation.bind(this)} user={this.state.user} />
 				</div>
 				<div className="edit-entry">
-					<Edit data={this.state.entry} onBackClick={this.navigateToSearch.bind(this)} user={this.state.user} />
+					<Entry data={this.state.entry} onBackClick={this.navigateToSearch.bind(this)} user={this.state.user} />
 				</div>
 			</div>
 		)

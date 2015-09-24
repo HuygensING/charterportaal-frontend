@@ -8,7 +8,7 @@ export function getDocumentSuggest(query, done) {
 	}
 	let xhrDone = function(err, resp, body) {
 		let data = JSON.parse(body);
-		done(data.map(function(d) { return {key: d.key, value: d.value[0]} }));
+		done(data);
 	}
 	xhr(options, xhrDone);
 };

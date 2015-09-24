@@ -1,5 +1,5 @@
 import React from "react";
-
+import ExternalIcon from "./icons/external";
 
 class Result extends React.Component {
 	constructor(props) {
@@ -35,14 +35,15 @@ class Result extends React.Component {
 	}
 
 
-	onEditClick(data) {
+	onViewClick(data) {
 		this.props.onSelect({...data, editThisRecord: true});
 	}
 
 
 	render() {
+		let metadata = this.props.data.data;
 		let links = this.props.data.data.links.length > 0 ? [
-				(<li><a href={this.props.data.data.links[0].url} target="_blank">{this.props.data.data.links[0].url}</a></li>),
+				(<li><a href={this.props.data.data.links[0].url} target="_blank">Archief <ExternalIcon /></a></li>),
 				(<a className="button" href={this.props.data.data.links[0].url} target="_blank">Ga naar archief</a>)
 			] : [null, null];
 
@@ -55,7 +56,14 @@ class Result extends React.Component {
 				<div className="more-info">
 					<img src="https://afbeeldingen.gahetna.nl/naa/thumb/500x500/320bb740-ee94-0f19-d611-e3c4dee1b3c2.jpg" />
 					<ul className="metadata">
-						<li><label>Gedrukt:</label><span>Mock data</span></li>
+						<li>
+							<label>Inventaristekst</label>
+							{metadata.inventaristekst.map((txt, i) => (<p key={i}>{txt}</p>) )}
+						</li>
+						<li>
+							<label>Signatuur</label>
+							<span>{["archief", "fonds", "inventarisNummer"].map((key) => metadata[key]).join("-")} </span>
+						</li>
 						{links[0]}
 					</ul>
 				</div>
@@ -63,8 +71,8 @@ class Result extends React.Component {
 					Meer info
 				</a>
 				{links[1]}
-				<a className="button edit" onClick={this.onEditClick.bind(this, this.props.data)} >
-					Bewerken
+				<a className="button edit" onClick={this.onViewClick.bind(this, this.props.data)} >
+					Tonen
 				</a>
 			</li>
 		)

@@ -17,11 +17,9 @@
 	color #000
 	font-weight 300
 
-.hire-faceted-search-result-list a.button.edit
-	display none
-
-.editable .hire-faceted-search-result-list a.button.edit
-	display inline-block
+.hire-faceted-search-result-list label
+	display block
+	font-weight 500
 
 .more-info
 	margin-top 12px
@@ -36,9 +34,6 @@
 	max-height 0
 	transition max-height 0.6s
 	overflow hidden
-
-.hire-faceted-search-result-list .more-info-opened .button
-	display none
 
 .more-info-opened
 	transition opacity 0.4s
@@ -60,3 +55,5 @@
 .child-is-open .hire-faceted-search-result-list > li:not(.more-info-opened)
 	opacity 0.3
 
+.external-icon
+	stroke #019dd6

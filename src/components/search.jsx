@@ -5,10 +5,14 @@ import config from "../config";
 
 const labels = {
 	facetTitles: {
-		"dynamic_sort_creator": "Auteur",
-		"dynamic_sort_title": "Titel",
-		"dynamic_i_date": "Datum"
+		"dynamic_i_date": "Datum",
+		"dynamic_s_archief": "Archief",
+		"dynamic_s_document_type": "Documenttype",
+		"dynamic_s_fonds": "Fonds",
+		"dynamic_s_editions": "Uitgaves"
 	},
+	"dynamic_sort_creator": "Vervaardiger",
+	"dynamic_sort_title": "Titel",
 	"resultsFound": "resultaten",
 	"sortBy": "Sorteer op",
 	"showAll": "Alles",
@@ -29,7 +33,7 @@ class Search extends React.Component {
 
 	onSelect(data) {
 		if(data && data.editThisRecord) {
-			this.props.onEditClick(data);
+			this.props.onViewClick(data);
 		} else {
 			if(document.querySelector(".more-info-opened")) {
 				this.setState({childIsOpen: true});
@@ -62,7 +66,7 @@ class Search extends React.Component {
 
 	render() {
 		return (
-			<div className={(this.state.childIsOpen ? "child-is-open " : "") + (this.props.user && this.props.user.token ? "editable " : "") }>
+			<div className={(this.state.childIsOpen ? "child-is-open " : null) }>
 				{this.renderSearch()}
 			</div>
 		);
@@ -73,7 +77,7 @@ class Search extends React.Component {
 
 Search.propTypes = {
 	user: React.PropTypes.object,
-	onEditClick: React.PropTypes.func.isRequired
+	onViewClick: React.PropTypes.func.isRequired
 }
 
 export default Search;
