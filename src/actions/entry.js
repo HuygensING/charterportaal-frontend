@@ -1,5 +1,6 @@
 import router from "../router";
 import config from "../config";
+import {findRelationTypeId} from "./relation-types";
 import xhr from "xhr";
 
 const DEFAULT_HEADERS = {
@@ -19,58 +20,89 @@ let fetchEntry = function(id, callback) {
 	xhr(options, xhrDone);
 }
 
-let findRelationType = function(name, callback) {
+//             createRelation(id, relationType, targetId, token, fetchAndDispatch.bind(this, id, dispatch))
+let createRelation = function(id, relationType, targetId, token, callback) {
+	let {typeId, inverse} = findRelationTypeId(relationType);
+	let data = {
+		accepted: true,
+		"@type": "charterrelation",
+		"^typeId": typeId,
+		"^typeType": "relationtype",
+		"^sourceId": inverse ? targetId : id,
+		"^sourceType": "document",
+		"^targetId": inverse ? id : targetId,
+		"^targetType": "document"
+	};
 	let options = {
-		headers: DEFAULT_HEADERS,
-		url: config.relationTypesUrl
+		headers: {...DEFAULT_HEADERS, Authorization: token},
+		method: "POST",
+		url: config.relationUrl,
+		body: JSON.stringify(data)
 	};
 
 	xhr(options, function(err, resp, body) {
-		let data = JSON.parse(body);
-		callback(data.find((relType) => relType.regularName === name)._id);
+		if(resp.statusCode > 299) {
+			let parsedBody = JSON.parse(body);
+			if(parsedBody.message) { alert(parsedBody.message); }
+		}
+		callback();
 	});
- }
+}
 
-let addIsCopyOf = function(id, targetId, token, callback) {
-	findRelationType("isCopiedBy", function(typeId) {
+// deleteRelation(id, relationType, relation, token, fetchAndDispatch.bind(this, id, dispatch))
+let deleteRelation = function(id, relationType, relation, token, callback) {
+	let {typeId, inverse} = findRelationTypeId(relationType);
+	let data = {
+		accepted: false,
+		"@type": "charterrelation",
+		"^typeId": typeId,
+		"^typeType": "relationtype",
+		"^sourceId": inverse ? relation.id : id,
+		"^sourceType": "document",
+		"^targetId": inverse ? id : relation.id,
+		"^targetType": "document",
+		"_id": relation.relationId,
+		"^rev": relation.rev
+	};
+	let options = {
+		headers: {...DEFAULT_HEADERS, Authorization: token},
+		method: "PUT",
+		url: config.relationUrl + "/" + relation.relationId
+	};
 
-		let data = {
-			accepted: true,
-			"@type": "charterrelation",
-			"^typeId": typeId,
-			"^sourceId": id,
-			"^sourceType": "document",
-			"^targetId": targetId,
-			"^targetType": "document"
-		};
-		let options = {
-			body: JSON.stringify(data),
-			headers: {...DEFAULT_HEADERS, Authorization: token},
-			method: "POST",
-			url: config.relationUrl
-		};
-		console.log("after findRelationType", JSON.stringify(data));
-		xhr(options, function(err, resp, body) {
-			console.log(err);
-			console.log(resp);
-			console.log(JSON.parse(body));
+	options.body = JSON.stringify(data);
+
+	xhr(options, function(err, resp, body) {
+		if(resp.statusCode > 299) {
+			let parsedBody = JSON.parse(body);
+			if(parsedBody.message) { alert(parsedBody.message); }
+		}
+		callback();
+	});
+}
+
+let fetchAndDispatch = function(id, dispatch) {
+	fetchEntry(id, (respData) => {
+		dispatch({
+			type: "SELECT_ENTRY",
+			data: respData
 		});
-	});
+	});	
 }
 
 export function selectEntry(data) {
 	return function(dispatch) {
-		fetchEntry(data.id, (respData) => {
-			dispatch({
-				type: "SELECT_ENTRY",
-				data: respData
-			});
-		});
+		fetchAndDispatch(data.id, dispatch);
 	}
 }
 
-export function addIsCopyOfRelation(id, targetId, token) {
+export function addRelation(id, relationType, targetId, token) {
 	return function(dispatch) {
-		addIsCopyOf(id, targetId, token);
+		createRelation(id, relationType, targetId, token, fetchAndDispatch.bind(this, id, dispatch))
+	}
+}
+export function removeRelation(id, relationType, relation, token) {
+	return function(dispatch) {
+		deleteRelation(id, relationType, relation, token, fetchAndDispatch.bind(this, id, dispatch))	
 	}
 }

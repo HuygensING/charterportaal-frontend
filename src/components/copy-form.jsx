@@ -13,7 +13,6 @@ class CopyForm extends React.Component {
 	}
 
 	componentWillReceiveProps (nextProps) {
-		console.log("componentWillReceiveProps", nextProps.id, this.props.id);
 		if(nextProps.id !== this.props.id) {
 			this.setState(INIT_STATE);
   		}

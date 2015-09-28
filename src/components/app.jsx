@@ -50,7 +50,7 @@ class App extends React.Component {
 		}
 	}
 
-	handleEditNavigation(data) {
+	handleEntryNavigation(data) {
 		appStore.dispatch(selectEntry(data));
 		this.requestEntryNavigation = "entry/" + data.id ;
 	}
@@ -80,10 +80,10 @@ class App extends React.Component {
 					<small>using <b style={{color: "blue"}}>test</b> Timbuctoo <b style={{color:"red"}}>api V2</b> with hire-faceted-search<b style={{color:"red"}}>-bridge-apiv2-apiv2.1</b></small>
 				</header>
 				<div className="search">
-					<Search onViewClick={this.handleEditNavigation.bind(this)} user={this.state.user} />
+					<Search onViewClick={this.handleEntryNavigation.bind(this)} user={this.state.user} />
 				</div>
 				<div className="edit-entry">
-					<Entry data={this.state.entry} onBackClick={this.navigateToSearch.bind(this)} user={this.state.user} />
+					<Entry data={this.state.entry} onBackClick={this.navigateToSearch.bind(this)} onChange={this.handleEntryNavigation.bind(this)} user={this.state.user} />
 				</div>
 			</div>
 		)
