@@ -54,7 +54,6 @@ class Search extends React.Component {
 					config={{
 						baseURL: config.baseUrl,
 						searchPath: "/search/charterdocuments",
-						levels: ["dynamic_sort_creator", "dynamic_sort_title"],
 						headers: {VRE_ID: "Charter", Accept: "application/json"}
 					}}
 					labels={labels}
