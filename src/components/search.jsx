@@ -1,5 +1,5 @@
 import React from "react";
-import FacetedSearch from "hire-faceted-search-bridge";
+import FacetedSearch from "hire-faceted-search";
 import Result from "./result";
 import config from "../config";
 
@@ -9,7 +9,8 @@ const labels = {
 		"dynamic_s_archief": "Archief",
 		"dynamic_s_document_type": "Documenttype",
 		"dynamic_s_fonds": "Fonds",
-		"dynamic_s_editions": "Uitgaves"
+		"dynamic_s_editions": "Uitgaves",
+		"term": "Titel"
 	},
 	"dynamic_sort_creator": "Vervaardiger",
 	"dynamic_sort_title": "Titel",
@@ -53,13 +54,12 @@ class Search extends React.Component {
 					config={{
 						baseURL: config.baseUrl,
 						searchPath: "/search/charterdocuments",
-						levels: ["dynamic_sort_creator", "dynamic_sort_title"],
 						headers: {VRE_ID: "Charter", Accept: "application/json"}
 					}}
 					labels={labels}
 					onChange={this.onChange.bind(this)}
 					onSelect={this.onSelect.bind(this)}
-					resultComponent={Result}
+					customComponents={{result: Result}}
 					/>;
 		return this.renderedSearch;
 	}
