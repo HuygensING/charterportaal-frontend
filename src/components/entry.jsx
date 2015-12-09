@@ -71,6 +71,10 @@ class Entry extends React.Component {
 						<label>Datum</label>
 						{this.props.data.date}
 					</li>
+					<li>
+						<label>Permanente url</label>
+						<a href={this.props.data["^pid"]}>{this.props.data["^pid"]}</a>
+					</li>
 					{link}
 					<li>
 						<label>Inventaristekst</label>
