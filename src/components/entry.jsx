@@ -21,26 +21,29 @@ class Entry extends React.Component {
 		appStore.dispatch(removeRelation(this.props.data._id, type, relation, this.props.user.token));
 	}
 
-	renderRelations(type) {
+	renderRelations(type, entryForm) {
 		let relations = (this.props.data["@relations"][type] || []).filter((rel) => rel.accepted);
-
-		if(!relations.length) { 
-			return <p>{type === "isCopyOf" ? "is geen kopie van een ander document" : "wordt niet gekopiëerd door een ander document"}</p>; 
+		if (relations.length || entryForm) {
+			return (
+				<li>
+					<label>{type === "isCopyOf" ? "Is kopie van" : "Wordt gekopiëerd door"}</label>
+					{relations.length ? <ul>
+						{relations.map((relation, i) => 
+							<CharterRelation 
+								data={relation} 
+								key={i} 
+								onClick={this.props.onChange.bind(this)} 
+								onDelete={this.removeRelation.bind(this)}
+								type={type} 
+								user={this.props.user} />
+						)}
+					</ul> : null}
+					{entryForm}
+				</li>
+			)
+		} else {
+			return null;
 		}
-
-		return (
-			<ul>
-				{relations.map((relation, i) => 
-					<CharterRelation 
-						data={relation} 
-						key={i} 
-						onClick={this.props.onChange.bind(this)} 
-						onDelete={this.removeRelation.bind(this)}
-						type={type} 
-						user={this.props.user} />
-				)}
-			</ul>
-		)
 	}
 
 	renderBody() {
@@ -60,7 +63,6 @@ class Entry extends React.Component {
 				<a href={this.props.data.links[0].url} target="_blank">Archief <ExternalIcon /></a>
 			</li>) : null;
 
-
 		return (
 			<div className="entry">
 				<h2>{this.props.data.title}</h2>
@@ -74,16 +76,8 @@ class Entry extends React.Component {
 						<label>Inventaristekst</label>
 						{this.props.data.inventaristekst.map((txt, i) => (<p key={i}>{txt}</p>) )}
 					</li>
-					<li>
-						<label>Is kopie van</label>
-						{this.renderRelations("isCopyOf")}
-						{form}
-					</li>
-					<li>
-						<label>Wordt gekopiëerd door</label>
-						{this.renderRelations("isCopiedBy")}
-						{inverseForm}
-					</li>
+					{this.renderRelations("isCopyOf", form)}
+					{this.renderRelations("isCopiedBy", inverseForm)}
 				</ul>
 			</div>
 		)
