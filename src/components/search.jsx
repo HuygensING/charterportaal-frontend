@@ -10,7 +10,7 @@ const labels = {
 		"dynamic_s_document_type": "Documenttype",
 		"dynamic_s_fonds": "Fonds",
 		"dynamic_s_editions": "Uitgaves",
-		"term": "Titel"
+		"dynamic_t_alltext": "Inventaristekst en regest"
 	},
 	"dynamic_k_date": "Datum",
 	"dynamic_sort_creator": "Oorkonder",
@@ -55,7 +55,9 @@ class Search extends React.Component {
 					config={{
 						baseURL: config.baseUrl,
 						searchPath: "/search/charterdocuments",
-						headers: {VRE_ID: "Charter", Accept: "application/json"}
+						headers: {VRE_ID: "Charter", Accept: "application/json"},
+						fullTextSearchFields: [{position: "top", name: "dynamic_t_alltext"}],
+						hideFreeTextSearch: true
 					}}
 					facetList={["dynamic_s_archief", "dynamic_i_date", "dynamic_s_fonds"]}
 					labels={labels}
