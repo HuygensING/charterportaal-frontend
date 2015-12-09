@@ -57,6 +57,7 @@ class Search extends React.Component {
 						searchPath: "/search/charterdocuments",
 						headers: {VRE_ID: "Charter", Accept: "application/json"}
 					}}
+					facetList={["dynamic_s_archief", "dynamic_i_date", "dynamic_s_fonds"]}
 					labels={labels}
 					onChange={this.onChange.bind(this)}
 					onSelect={this.onSelect.bind(this)}
