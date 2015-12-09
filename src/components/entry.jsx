@@ -72,6 +72,10 @@ class Entry extends React.Component {
 						{this.props.data.date}
 					</li>
 					<li>
+						<label>Signatuur</label>
+						{this.props.data.signature}
+					</li>
+					<li>
 						<label>Permanente url</label>
 						<a href={this.props.data["^pid"]}>{this.props.data["^pid"]}</a>
 					</li>
