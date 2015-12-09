@@ -12,6 +12,7 @@ const labels = {
 		"dynamic_s_editions": "Uitgaves",
 		"term": "Titel"
 	},
+	"dynamic_k_date": "Datum",
 	"dynamic_sort_creator": "Oorkonder",
 	"dynamic_sort_title": "Titel",
 	"resultsFound": "resultaten",
