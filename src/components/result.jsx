@@ -9,7 +9,7 @@ class Result extends React.Component {
 	render() {
 		return (
 			<li onClick={this.onViewClick.bind(this, this.props.data)}>
-				<label>{this.props.data.displayName}</label>
+				<label>{this.props.data.displayName.split(" ").slice(1).join(" ")}</label>
 				<span className="result-date">
 					{this.props.data.data.date}
 				</span>
