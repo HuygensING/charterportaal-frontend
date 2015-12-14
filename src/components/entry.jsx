@@ -71,7 +71,7 @@ class Entry extends React.Component {
 			: null;
 		let images = ["","_R", "_V"]
 			.map(suffix => "/images/" + this.props.data.archief + "_" + this.props.data.fonds + "_" + this.props.data.inventarisNummer + suffix + ".jpg")
-			.map(url => <image alt=" " className="hide-on-error" src={url} />)
+			.map(url => <img onError={function (e) { e.target.src = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" }} className="hide-on-error" src={url} />)
 		let imageContainer = (
 			<li className="document-thumbnails">
 				<div className="no-images-available">(Er zijn geen afbeeldingen beschikbaar)</div>
