@@ -62,10 +62,11 @@ class Entry extends React.Component {
 				<label>Link</label>
 				<a href={this.props.data.links[0].url} target="_blank">Archief <ExternalIcon /></a>
 			</li>) : null;
-		let regest = this.props.data.regestNummer ? 
+		let regest = (this.props.data.regestNummer || (this.props.data.tekstRegest && this.props.data.tekstRegest.length)) ? 
 			(<li>
 				<label>Regest</label>
-				{this.props.data.regestNummer || ""}
+				Nummer: {this.props.data.regestNummer || ""}
+				{this.props.data.tekstRegest.map((txt, i) => (<p key={i}>{txt}</p>) )}
 			</li>) 
 			: null;
 
