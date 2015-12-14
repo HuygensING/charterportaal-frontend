@@ -69,6 +69,15 @@ class Entry extends React.Component {
 				{this.props.data.tekstRegest.map((txt, i) => (<p key={i}>{txt}</p>) )}
 			</li>) 
 			: null;
+		let images = ["","_R", "_V"]
+			.map(suffix => "/images/" + this.props.data.archief + "_" + this.props.data.fonds + "_" + this.props.data.inventarisNummer + suffix + ".jpg")
+			.map(url => <image alt=" " className="hide-on-error" src={url} />)
+		let imageContainer = (
+			<li className="document-thumbnails">
+				<div className="no-images-available">(Er zijn geen afbeeldingen beschikbaar)</div>
+				{images}
+			</li>
+		);
 
 		return (
 			<div className="entry">
@@ -92,6 +101,7 @@ class Entry extends React.Component {
 						<label>Inventaristekst</label>
 						{this.props.data.inventaristekst.map((txt, i) => (<p key={i}>{txt}</p>) )}
 					</li>
+					{imageContainer}
 					{this.renderRelations("isCopyOf", form)}
 					{this.renderRelations("isCopiedBy", inverseForm)}
 				</ul>
