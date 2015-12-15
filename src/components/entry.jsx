@@ -4,6 +4,7 @@ import {addRelation, removeRelation} from "../actions/entry";
 import ExternalIcon from "./icons/external";
 import appStore from "../app-store";
 import CharterRelation from "./charter-relation";
+import config from "../config";
 
 
 class Entry extends React.Component {
@@ -70,7 +71,7 @@ class Entry extends React.Component {
 			</li>) 
 			: null;
 		let images = ["","_R", "_V"]
-			.map(suffix => "/images/" + this.props.data.archief + "_" + this.props.data.fonds + "_" + this.props.data.inventarisNummer + suffix + ".jpg")
+			.map(suffix => config.imageUrl + this.props.data.archief + "_" + this.props.data.fonds + "_" + this.props.data.inventarisNummer + suffix + ".jpg")
 			.map(url => <img onError={function (e) { e.target.src = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" }} className="hide-on-error" src={url} />)
 		let imageContainer = (
 			<li className="document-thumbnails">

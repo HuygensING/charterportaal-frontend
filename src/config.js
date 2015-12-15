@@ -8,5 +8,6 @@ export default {
 	federatedAuthenticateUrl: "https://secure.huygens.knaw.nl/saml2/login",
 	basicAuthenticateUrl: baseUrl + "/authenticate",
 	userUrl: baseUrl + "/system/users/me",
+	imageUrl: "/charterportaal/images/",
 	vreId: "Charter"
 };
