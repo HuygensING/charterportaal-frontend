@@ -29,13 +29,13 @@ class Entry extends React.Component {
 				<li>
 					<label>{type === "isCopyOf" ? "Is kopie van" : "Wordt gekopiëerd door"}</label>
 					{relations.length ? <ul>
-						{relations.map((relation, i) => 
-							<CharterRelation 
-								data={relation} 
-								key={i} 
-								onClick={this.props.onChange.bind(this)} 
+						{relations.map((relation, i) =>
+							<CharterRelation
+								data={relation}
+								key={i}
+								onClick={this.props.onChange.bind(this)}
 								onDelete={this.removeRelation.bind(this)}
-								type={type} 
+								type={type}
 								user={this.props.user} />
 						)}
 					</ul> : null}
@@ -49,7 +49,7 @@ class Entry extends React.Component {
 
 	renderBody() {
 		if(!this.props.data.title) { return (<div></div>); }
-		
+
 		let form = this.props.user.token ?
 			(<CopyForm id={this.props.data._id} onChange={this.addRelation.bind(this, "isCopyOf")} />)
 			: null;
@@ -58,17 +58,17 @@ class Entry extends React.Component {
 			(<CopyForm id={this.props.data._id} onChange={this.addRelation.bind(this, "isCopiedBy")} />)
 			: null;
 
-		let link = this.props.data.links.length > 0 ? 
+		let link = this.props.data.links.length > 0 ?
 			(<li>
 				<label>Link</label>
 				<a href={this.props.data.links[0].url} target="_blank">Archief <ExternalIcon /></a>
 			</li>) : null;
-		let regest = (this.props.data.regestNummer || (this.props.data.tekstRegest && this.props.data.tekstRegest.length)) ? 
+		let regest = (this.props.data.regestNummer || (this.props.data.tekstRegest && this.props.data.tekstRegest.length)) ?
 			(<li>
 				<label>Regest</label>
 				Nummer: {this.props.data.regestNummer || ""}
 				{this.props.data.tekstRegest.map((txt, i) => (<p key={i}>{txt}</p>) )}
-			</li>) 
+			</li>)
 			: null;
 		let images = ["","_R", "_V"]
 			.map(suffix => config.imageUrl + this.props.data.archief + "_" + this.props.data.fonds + "_" + this.props.data.inventarisNummer + suffix + ".jpg")
@@ -87,6 +87,10 @@ class Entry extends React.Component {
 					<li>
 						<label>Datum</label>
 						{this.props.data.date}
+					</li>
+					<li>
+						<label>Archief naam</label>
+						{this.props.data.fondsNaam}
 					</li>
 					<li>
 						<label>Signatuur</label>
