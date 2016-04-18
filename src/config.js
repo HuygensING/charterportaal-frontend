@@ -1,4 +1,4 @@
-let baseUrl = "https://acc.repository.huygens.knaw.nl/v2.1";
+let baseUrl = "https://conversion.repository.huygens.knaw.nl/v2.1";
 
 export default {
 	baseUrl: baseUrl,
