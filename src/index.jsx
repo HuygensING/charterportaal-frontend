@@ -13,4 +13,3 @@ fetchRelationTypes(function() {
 		root: ROOT
 	});
 });
-

@@ -12,4 +12,3 @@ cp static/index.html build/development
 node_modules/.bin/browserify \
 	--require classnames \
 	--require react > build/development/js/react-libs.js
-
