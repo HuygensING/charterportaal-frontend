@@ -63,6 +63,7 @@ class Search extends React.Component {
 					labels={labels}
 					onChange={this.onChange.bind(this)}
 					onSelect={this.onSelect.bind(this)}
+					query={{facetValues: [], sortParameters: [{ fieldname: "dynamic_k_date", direction: "asc"}]}}
 					customComponents={{result: Result}}
 					/>;
 		return this.renderedSearch;
