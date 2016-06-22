@@ -12,11 +12,10 @@ import csv
 import re
 import json
 from lxml import etree
-from lxml.cssselect import CSSSelector
 from argparse import ArgumentParser
 
 def getAllArchives(archiveFile, size):
-    with open('test.txt','r') as f:
+    with open(archiveFile,'r') as f:
         for line in f:
             line = line.rstrip()
             getAllImages(line, size)
@@ -144,7 +143,7 @@ def main():
                               with a line containing '1.01.02' for Staten Generaal""")
     parser.add_argument("-p", "--path", required=True,
                         help="""path to store images""")
-    parser.add_argument("-w", "--min_width", required=True,, required=True,
+    parser.add_argument("-w", "--min_width", required=True,
                       help="desired image width e.g. 300 500, 1280, 3000, the nearest greater size will be downloaded")
 
     print "Starting..."
