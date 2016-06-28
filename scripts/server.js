@@ -26,6 +26,7 @@ proxyOptions.via = true;
 browserSync.watch(watchFiles, debounce(onFilesChanged, 300));
 
 browserSync.init({
+	port: process.argv[2] || 3000,
 	server: {
 		baseDir: baseDir,
 		middleware: [proxy(proxyOptions), modRewrite([
