@@ -1,2 +1,0 @@
-charterinstitute.json;chartercollective
-charterdocument.json;charterdocument

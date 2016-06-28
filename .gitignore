@@ -1,4 +1,5 @@
 node_modules
 build
-.eslintrc
-npm-debug.log
+
+charterportaal_omzetter_NA/xmls
+charterportaal_omzetter_NA/result
