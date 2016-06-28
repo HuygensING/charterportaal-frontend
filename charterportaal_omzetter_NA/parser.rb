@@ -297,7 +297,9 @@ class MyListener
     def scopecontent__start attrs
 	if !attrs['altrender'].nil?
 	    altrender = attrs['altrender']
-	    @in_regest_tekst = altrender.eql?("Appendix_Regestenlijst")
+	    if altrender.eql?("Appendix_Regestenlijst")
+		@in_regest_tekst = true
+	    end
 	end
     end
 
