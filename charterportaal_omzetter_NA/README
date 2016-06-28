@@ -1,0 +1,13 @@
+To run use
+
+```
+docker run -it --rm -v $PWD/result:/root/result chart_omzetter
+```
+
+This will download new xml files and convert them to an export
+
+To re-use xml files mount them under /root/xmls
+
+```
+docker run -it --rm -v $PWD/my_xmls:/root/xmls -v $PWD/result:/root/result chart_omzetter
+```

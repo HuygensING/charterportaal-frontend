@@ -1,3 +1,5 @@
+#!/usr/bin/env ruby
+
 require 'open-uri'
 require 'pp'
 require './timer.rb'
@@ -5,7 +7,7 @@ require './timer.rb'
 
 def copy_file collection,file_name,output_dir
     uitvoer = File.new("#{output_dir}/#{file_name}","w")
-    puts "http://www.gahetna.nl/collectie/archief/ead/xml/eadid/#{collection} --> #{file_name}" 
+    puts "http://www.gahetna.nl/collectie/archief/ead/xml/eadid/#{collection} --> #{file_name}"
     open("http://www.gahetna.nl/collectie/archief/ead/xml/eadid/#{collection}") do |f|
 	while(line = f.gets) do
 	    uitvoer.puts line
@@ -56,4 +58,3 @@ if __FILE__ == $0
 
     Timer.stop
 end
-

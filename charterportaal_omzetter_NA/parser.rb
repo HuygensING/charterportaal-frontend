@@ -1,3 +1,5 @@
+#!/usr/bin/env ruby
+
 require 'rexml/document'
 require 'rexml/streamlistener'
 require 'rubygems'
@@ -501,7 +503,7 @@ class MyListener
 	STDERR.puts "res: |#{res}|"  if @debug
 	return res
     end
-    
+
     def put_out( arg )
 	@output.write(arg) unless $testrun
 	arg
@@ -578,6 +580,7 @@ if __FILE__ == $0
     $testrun = false
     multiple_archives = ""
     thumb_dir = ""
+    input_dir = ""
     csv_file_name = ""
     begin
     (0..(ARGV.size-1)).each do |i|
@@ -594,6 +597,8 @@ if __FILE__ == $0
 		multiple_archives = ARGV[i+1]
 	    when '-t'
 		thumb_dir = ARGV[i+1]
+	    when '-x'
+		input_dir = ARGV[i+1]
 	    when '-csv'
 		csv_file_name = ARGV[i+1]
 	    when '--testrun'
@@ -618,7 +623,7 @@ if __FILE__ == $0
 	puts "use: parser.rb -a archive -c collection -d output_dir -i file_in"
 	puts "the name of the output file(s) are derived from the archive and collection names"
 	puts "or"
-	puts "use: parser.rb -f description file"
+	puts "use: parser.rb -f description_file -x directory_with_xmls"
 	puts "In this description file a list of archives and collections can be defined which will be processed"
 	exit(1)
     end
@@ -670,7 +675,7 @@ if __FILE__ == $0
 			output_documents = "charterdocument.json"
 			output_relations = "charterrelation.json"
 #			debug = $collection.eql?("3.19.18")
-			Parser.parseFile(file_in,output_documents,output_relations,csv_file,debug)
+			Parser.parseFile(File.join(File.absolute_path(input_dir), file_in),output_documents,output_relations,csv_file,debug)
 		    else
 			STDERR.puts "regel #{line_nr} in #{multiple_archives} niet volledig"
 		    end
@@ -693,4 +698,3 @@ if __FILE__ == $0
     Timer.stop
 
 end
-
