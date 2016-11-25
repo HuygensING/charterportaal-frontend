@@ -18,7 +18,10 @@ kolom 14-16:: (Links, Thumbnails, Thumbnaillabels) spreken voor zich
 
 = As discussed with Rik
 
-A charter is can be defined using the xpath: `//*[did/physdesc[contains(text(), 'charter')]]//descendant-or-self::*[@level='file'])`
+A charter is can be defined using the xpath: 
+```
+//*[did/physdesc[contains(text(), 'charter')]]//descendant-or-self::*[@level='file'])
+```
 for it's attributes we can use:
 
 titel:: unittitle
