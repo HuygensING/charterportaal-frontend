@@ -1,0 +1,43 @@
+= Current
+
+Kolommen 1-5:: spreken voor zich
+kolom 6:: level: de meeste data in de input staat in <c0.> tags. Die laatste '.' noem  ik het level. Dit is in zoverre van belang dat in veel hogere levels alleen nog maar summiere data staat die ik in de parser evt aanvul met gegevens uit het 1 niveau lagere level.
+Hoger en lager en level kunnen ook nog verwarring opleveren: hoe lager het level nummer, des te hoger het niveau.
+Veel documenten staan op level 3, vaak komt ook level 4 voor; 5-8 veel minder. Level 1 en 2 zijn hogere abstractieniveaus voor verzamelingen e.d.
+kolom 7:: Dates_raw: de waarde in een gevonden <unitDate>
+kolom 8:: Date_parsed: het resultaat; hier staat false als er niets van te maken viel.
+kolom 9:: Title: komt uit een <unitTitle>
+kolom 10:: Inventaris_tekst: opnieuw de <unitTitle> samen met die van het hogere niveau (als die niet leeg is). Dit omdat veel <unitTitle>'s weinig-zeggende inhoud hebben ('charter 1', 'charter 2', etc).
+kolom 11:: Editie: als een tekst matched op [gG]edrukt dan staat er informatie over een editie.
+kolom 12:: Overige: komt uit een <odd>. Hier staat ook vaak editie-informatie.
+kolom 13:: Regesttekst: in het script vind ik het commentaar:
++
+    # Wat nu tekstregest is wordt inventaristekst
+    # Dus tekstregest blijft leeg
+kolom 14-16:: (Links, Thumbnails, Thumbnaillabels) spreken voor zich
+
+= As discussed with Rik
+
+A charter is can be defined using the xpath: `//*[did/physdesc[contains(text(), 'charter')]]//descendant-or-self::*[@level='file'])`
+for it's attributes we can use:
+
+titel:: unittitle
+datum::  is de did/unitdate/@normal (of we gaan zelf parsen?)
+archiefnaam:: //archdesc/unittitle[@type="short"]
+signatuur:: filename part 
+regest:: alle xml elementen scheiden door spaties en verder alleen op de P een nieuwe regel
+Permanente url:: link naar onze handle (vind ik niet zeker noodzakelijk)
+Link:: did/unitid[@type='handle']
+Inventaristekst:: toon de boom zoals op NA 
+Plaatjesurl:: as it was
+debug information:: For people reviewing the charterportaal we want to store the did's from the ancestor:: axis
+
+in the result-tile: if a charter is has a filgrp in the level above it, show that unittitle as well, but show the two as a tree (so the chartertitle indented)
+
+When crawling provide a report:
+  - How many unitdates contain one or more 4 digit sequences but no @normal
+  - when was the crawl done
+  - how many files and how many mb's
+
+Approach:
+We create an export (to csv/excel) based on this export. Jan and Rik will check that by selecting random pages from the NA and comparing them to the ones in the file.
