@@ -1,5 +1,3 @@
-#!/usr/bin/env ruby
-
 require 'rexml/document'
 require 'rexml/streamlistener'
 require 'rubygems'
@@ -18,9 +16,9 @@ class Parser
 	    file_rels = File.new("#{$output_dir}/#{output_rels}","a")
 	end
 	listener = MyListener.new(file_docs,file_rels,csv_file,debug)
-	source = File.new File.expand_path(inputfilename)
-	STDERR.puts inputfilename
-	puts inputfilename
+	source = File.new File.expand_path("downloads_161108/#{inputfilename}")
+	file_date = source.mtime.strftime("%Y-%m-%d")
+	STDOUT.puts "#{inputfilename} (#{file_date})"
 	Document.parse_stream(source, listener)
 	source.close
     end
@@ -48,7 +46,7 @@ class MyListener
 	$aantal = 0
 	@level = 0
 	@unit_title = Array.new(10,"")
-	@dates = Array.new(10,"")
+	@unit_ids = Array.new(10,"")
 	$tags = Array.new
 	start_record
 	@aant_p_in_odd = Array.new(10,0)
@@ -56,6 +54,7 @@ class MyListener
 	$collective_id = "CHAC00000001"
 	@fondsnaam = ""
 	@debug = debug
+	@dates = Array.new(10,["",""])
     end
 
     def outputfile
@@ -74,13 +73,16 @@ class MyListener
 	@volgnr = ""
 	@inventaris_tekst = ""
 	@title = ""
-	@date = ""
-	@save_date = ""
+	@date_normal = ""
+	@date_parsed = ""
+	@date_as_is = ""
+	@in_date = false
+	@save_raw_date = false
        	@tekstRegest = []
 	@description_of_editions = ""
 	@unit_id = ""
+	@unit_id_printed = false
 	@in_fondsnaam = false
-	@in_file = false
 	@in_unitid = false
 	@in_link = false
 	@in_physdesc = false
@@ -103,7 +105,7 @@ class MyListener
 	# local variables to build csv line:
 	title = ""
 	full_title = ""
-	inventaris_tekst = ""
+	inventaris_tekst = []
 	overige = ""
 	regest_tekst = ""
 	links = ""
@@ -117,19 +119,28 @@ class MyListener
 	put_out ',"fonds":"' + $collection + '"'
 	put_out ',"fondsNaam":"' + @fondsnaam + '"'
 	put_out ',"inventarisNummer":"' + @unit_id + '"'
-	put_out ',"date" : "' + @dates[@level] + '"'
+	# dit aanpassen
+	if @dates[@level][0].instance_of? Array
+	    put_out ",\"date\" : \"#{@dates[@level][0][1]}\""
+	else
+	    put_out ",\"date\" : \"#{@dates[@level][0]}\""
+	end
 	if @unit_title[@level].size<71
 	    title = "#{@unit_title[@level]}"
 	else
 	    title = "#{@unit_title[@level][0..@unit_title[@level].rindex(' ',70)]}..."
 	end
 	put_out ',"title" : "' + title + '"'
-	if !@unit_title[@level-1].empty?
-	    inventaris_tekst = '["' + @unit_title[@level-1] + '","' + @unit_title[@level] + '"]'
-	else
-	    inventaris_tekst = '["' + @unit_title[@level] + '"]'
+	(1..@level).each do |level|
+	    inventaris_tekst << "\"#{@unit_ids[level]}\""
+	    inventaris_tekst << "\"#{@unit_title[level]}\""
 	end
-	put_out ',"inventaristekst" : ' + inventaris_tekst
+#	if !@unit_title[@level-1].empty?
+#	    inventaris_tekst = '["' + @unit_title[@level-1] + '","' + @unit_title[@level] + '"]'
+#	else
+#	    inventaris_tekst = '["' + @unit_title[@level] + '"]'
+#	end
+	put_out ',"inventaristekst" : [' + inventaris_tekst.join(',') + ']'
 	put_out ',"descriptionOfEditions" : "' + @editie + '"' if !@editie.empty?
 	if !@overige.empty?
 	    put_out ',"overige" : "'
@@ -142,11 +153,12 @@ class MyListener
 	if !@regest_tekst.empty?
 	    put_out ',"tekstRegest" : '
 	    regest_tekst = "["
-	    @regest_tekst.each_with_index do |regest,ind|
-		regest_tekst += "," if ind>0
-		regest_tekst += "\"" + opschonen(regest) + "\""
-	    end
-	    regest_tekst += "]"
+#	    @regest_tekst.each_with_index do |regest,ind|
+#		regest_tekst += "," if ind>0
+#		regest_tekst += "\"" + opschonen(regest) + "\""
+#	    end
+#	    regest_tekst += "]"
+	    regest_tekst = opschonen(@regest_tekst.join(' '))
 	    put_out regest_tekst
 	end
 	if !@links.empty?
@@ -183,9 +195,21 @@ class MyListener
 	    @rels_file.puts  '{"typeName":"isStoredAt","sourceType":"document","sourceValue":"' + id + '","targetType":"collective","targetValue":"' + $collective_id + '"}'
 	end
 	$record_id += 1
-	@csv_file.puts "#{id}	#{$archive}	#{$collection}	#{@fondsnaam}	#{@unit_id}	#{@dates[@level]}	#{title}	#{inventaris_tekst}	#{@editie}	#{overige}	#{regest_tekst}	#{links}	#{thumbnails}	#{thumbnaillabels}"
+	if @dates[@level][0].instance_of? Array
+	    date_result = @dates[@level][0][1]
+	else
+	    date_result = @dates[@level][0]
+	end
+	if @dates[@level][1].nil?
+	    put_stderr "fonds: #{@fondsnaam} - unit: #{@unit_id}"
+	end
+	if @dates[@level][1].nil? || @dates[@level][1].empty?
+	    put_stderr "date 1 level higher: #{@dates[@level-1][1]}"
+	end
+	@csv_file.puts "#{id}	#{$archive}	#{$collection}	#{@fondsnaam}	#{@unit_ids[@level]}	#{@level}	#{@dates[@level][0]}	#{@dates[@level][1]}	#{@dates[@level][2]}	#{title}	[#{inventaris_tekst.join(',')}]	#{@editie}	#{overige}	#{regest_tekst}	#{links}	#{thumbnails}	#{thumbnaillabels}"
 	rescue => detail
 	    STDERR.puts detail
+	    STDERR.puts detail.backtrace.join("\n")
 	    exit(1)
 	end
     end
@@ -194,72 +218,99 @@ class MyListener
 #	STDERR.puts "#{name}__start" if @debug
 	@level = name.match(/c0(\d)/)[1].to_i
 #	STDERR.puts "level: #{@level}" if @debug
-	if !@in_file && attrs['level'].eql?("file")
+	if !@in_file && attrs['level'].eql?("file") # || attrs['level'].eql?("item"))
+	    @in_file_level = @level
 	    @unit_title[@level] = ""
 	    $aantal += 1
 	    @in_file = true
-	    @save_date = @date if !@date.empty?
 	end
     end
 
     def c00__end name
 #	STDERR.puts "#{name}__end (#{@level})" if @debug
-	if @in_file && @level.eql?(name.match(/c0(\d)/)[1].to_i)
+	close_level = name.match(/c0(\d)/)[1].to_i
+	if @in_file && @level.eql?(close_level)
 #	    STDERR.puts "@in_charter: #{@in_charter}" if @debug
 	    export_record if @in_charter
-	    @in_file = false
+	    @in_file = false if @in_file_level.eql?(close_level)
 	    start_record
 	end
+	@unit_title
     end
 
     def unittitle__start attrs
 	@in_title = true
 	label = attrs['label']
-	if !label.nil?
-	    @in_fondsnaam = true if label.strip.eql?("Naam archiefblok:")
-	end
+	type = attrs['type']
+#	@in_fondsnaam = true if !label.nil? && label.strip.eql?("Naam archiefblok:")
+	@in_fondsnaam = true if !type.nil? && type.eql?("short")
     end
 
     def unittitle__end
 	@in_title = false
+	@unit_title[@level] = opschonen(@title)  # .gsub(/"/,"\\\"").strip
 	if @in_fondsnaam
 	    @fondsnaam = @title.strip
 	    @in_fondsnaam = false
-	else
-	    @unit_title[@level] = opschonen(@title)  # .gsub(/"/,"\\\"").strip
+#	else
 #	    STDERR.puts "unit_title[#{@level}]: #{@unit_title[@level]}" if @debug
 	end
 	@title = ""
     end
 
     def unitdate__start attrs
+	if !attrs['normal'].nil?
+	    @date_normal = attrs['normal']
+	else
+	    @date_normal = ""
+	end
 	@in_date = true
     end
 
     def unitdate__end
+	@dates[@level] = [@date_normal,@date_as_is,@date_parsed]
+	# count dates
+	$count_unit_dates += 1
+	if @date_normal.empty?
+	    $count_empty_date_normal += 1 
+	    $count_date_text_filled += 1 if !@date_as_is.empty?
+	    $count_parse_succes += 1 if !@date_parsed.empty?
+	    if @date_as_is.size > 4
+		$count_date_text_long += 1
+		$count_parse_long_succes += 1 if !@date_parsed.empty?
+	    end
+	end
+	$count_date_text += 1 if !@date_as_is.empty?
+	$count_parsed_dates += 1 if !@date_parsed.empty?
+	#
 	@in_date = false
-	@dates[@level] = @date
     end
 
     def unitid__start attrs
-	if @in_file
-	   if attrs['type'].eql?("ABS")
-	       @in_unitid = true
-	   elsif attrs['type'].eql?("handle")
-	       @in_link = true
-	   end
+#	if @in_file
+#	   if attrs['type'].eql?("ABS")
+#	       @in_unitid = true
+#	   els
+	if attrs['type'].eql?("handle")
+	       @in_link = true if @in_file
+#	   elsif attrs.empty?
+	else
+	    @in_unitid = true
 	end
+#	end
     end
 
     def unitid__end
 	if @in_file
 	    if @in_unitid
-		@in_unitid = false
-		STDERR. puts @unit_id if @debug
+		@unit_id_printed = false
+		#STDERR. puts @unit_id if @debug
 	    elsif @in_link
 		@in_link = false
 	    end
 	end
+	@unit_ids[@level] = @unit_id
+	@in_unitid = false
     end
 
     def odd__start attrs
@@ -329,7 +380,7 @@ class MyListener
 	rescue => detail
 	    if !$tags.include?(name)
 		$tags << name
-		puts "#{detail}\nin #{name}" if @debug
+		#puts "#{detail}\nin #{name}" if @debug
 	    end
 	end
 	return result
@@ -340,10 +391,13 @@ class MyListener
 	    @current_text << "#{text.strip}"
 	    @editie = text.strip if text.match(/[gG]edrukt/)
 	end
-	@in_charter = !text.match("charter").nil?  if @in_physdesc
-	@in_charter = !text.downcase.match("charter").nil?  if !@in_charter && @in_title
+	if @in_physdesc    # && self or parent ==file???
+	    @in_charter = !text.match("charter").nil?
+	    @in_charter = !text.downcase.match("charter").nil?  if !@in_charter
+	end
 	@title += " " + text.strip if @in_title
-	@date = parse_date(text.strip) if @in_date
+	@date_parsed = parse_date(text.strip) if @in_date
+	@date_as_is = text.strip if @in_date
 	@unit_id = text.strip if @in_unitid
 	@links << text.strip if @in_link
 	if @in_regest_tekst && !text.strip.empty?
@@ -386,7 +440,12 @@ class MyListener
     end
 
     def parse_date text
-	text.gsub!(/\((\d\d)\)(\d\d)/,'\1\2')
+	return text if text.match(/^\d\d\d\d$/)
+	save_date = text
+	text.gsub!("(","")
+	text.gsub!(")","")
+#	text.gsub!(/\((\d\d)\)(\d\d)/,'\1\2')
+#	text.gsub!(/(\d\d)\((\d\d)\)/,'\1\2')
 	text = text[0..-2] if text[-1..-1].eql?(".")
 	md = text.match(/^(ca.)? ?(\d{4})$/)
 	if !md.nil?
@@ -398,10 +457,13 @@ class MyListener
 	md = text.match(/^\((\d{4})\)$/)
 	return sprintf("%04d~",md[1]) if !md.nil?
 
+	md = text.match(/^(\d{4}) ca$/)
+	return sprintf("%04d~",md[1]) if !md.nil?
+
 	md = text.match(/^\[(\d{4})\]$/)
 	return sprintf("%04d~",md[1]) if !md.nil?
 
-	md = text.match(/^(\d{4})-(\d{4})$/)
+	md = text.match(/^(\d{4}) ?- ?(\d{4})$/)
 	return sprintf("%04d/%04d",md[1],md[2]) if !md.nil?
 
 	md = text.match(/^(\d{2})\((\d{2})\) (\S+) (\d+)$/)
@@ -452,7 +514,7 @@ class MyListener
 		date_to = sprintf("%04d-%02d-%02d",jaar_to,mnd_2,md[3]) unless mnd_2.nil?
 		return "#{date_from}/#{date_to}#{ongeveer}"
 		rescue => detail
-		    STDERR.puts detail
+		    put_stderr  detail
 		    STDERR.puts "parts: #{parts}"
 		    STDERR.puts "jaar_to: #{jaar_to}"
 		    STDERR.puts "maand: #{md[2]}"
@@ -464,49 +526,59 @@ class MyListener
 	md = text.match(/^(\d{4}) (\S+) (\d{1,2})$/)
 	if !md.nil?
 	    mnd = detect_maand md[2]
-	    STDERR.puts "date? : #{text.strip}" if(mnd.nil? || mnd.eql?(0)) && @debug
+	    put_stderr "date? : #{text.strip}" if(mnd.nil? || mnd.eql?(0)) && @debug
 	    return sprintf("%04d-%02d-%02d",md[1],mnd,md[3]) unless mnd.nil?
 	end
 
 	md = text.match(/^(\d{1,2}) (\S+) (\d{4})$/)
 	if !md.nil?
 	    mnd = detect_maand md[2]
-	    STDERR.puts "date? : #{text.strip}" if(mnd.nil? || mnd.eql?(0)) && @debug
+	    put_stderr "date? : #{text.strip}" if(mnd.nil? || mnd.eql?(0)) && @debug
 	    return sprintf("%04d-%02d-%02d",md[3],mnd,md[1]) unless mnd.nil?
 	end
 
 	md = text.match(/^\((\d{4}) (\S+) (\d{1,2})\)$/)
 	if !md.nil?
 	    mnd = detect_maand md[2]
-	    STDERR.puts "date? : #{text.strip}" if(mnd.nil? || mnd.eql?(0)) && @debug
+	    put_stderr "date? : #{text.strip}" if(mnd.nil? || mnd.eql?(0)) && @debug
 	    return sprintf("%04d-%02d-%02d~",md[1],mnd,md[3]) unless mnd.nil?
 	end
 
 	md = text.match(/^(\d{4}) (\S+)$/)
 	if !md.nil?
 	    mnd = detect_maand md[2]
-	    STDERR.puts "date? : #{text.strip}" if(mnd.nil? || mnd.eql?(0)) && @debug
+	    put_stderr "date? : #{text.strip}" if(mnd.nil? || mnd.eql?(0)) && @debug
 	    return sprintf("%04d-%02d",md[1],mnd) unless mnd.nil?
 	end
 
-	STDERR.puts "date? : #{text.strip}" if @debug
-	return text.strip
+	put_stderr "date? : #{text.strip}" if @debug
+	return "" # [text,false]
     end
 
     def detect_maand maand
-	STDERR.puts "maand: |#{maand[0..2]}|"  if @debug
+#	STDERR.puts "maand: |#{maand[0..2]}|"  if @debug
 	res = Maanden.index(maand[0..2].downcase)
 	if res == nil
 	    res = 3  if maand[0..2].downcase.eql?("maa")
 	    res = 10  if maand[0..2].downcase.eql?("oct")
 	end
-	STDERR.puts "res: |#{res}|"  if @debug
+#	STDERR.puts "res: |#{res}|"  if @debug
+	put_stderr "maand: |#{maand}| geeft res 0"  if @debug && res==0
 	return res
     end
-
+    
     def put_out( arg )
 	@output.write(arg) unless $testrun
 	arg
+    end
+
+    def put_stderr text
+	return if @unit_id.empty?
+	if !@unit_id_printed
+	    STDERR.puts "unit_id: #{@unit_id}"
+	    @unit_id_printed = true
+	end
+	STDERR.puts text
     end
 
     def result
@@ -570,17 +642,19 @@ end
 
 if __FILE__ == $0
     Timer.start
+    STDOUT.puts
+    STDOUT.puts "filename (date)"
 
     file_in = ""
     file_out = ""
     debug = false
     $output_dir = ""
+
     $thumbnails = Hash.new
     $thumbnaillabels = Hash.new
     $testrun = false
     multiple_archives = ""
     thumb_dir = ""
-    input_dir = ""
     csv_file_name = ""
     begin
     (0..(ARGV.size-1)).each do |i|
@@ -597,8 +671,6 @@ if __FILE__ == $0
 		multiple_archives = ARGV[i+1]
 	    when '-t'
 		thumb_dir = ARGV[i+1]
-	    when '-x'
-		input_dir = ARGV[i+1]
 	    when '-csv'
 		csv_file_name = ARGV[i+1]
 	    when '--testrun'
@@ -617,16 +689,26 @@ if __FILE__ == $0
     else
 	csv_file = File.new(csv_file_name,"w")
     end
-    csv_file.puts "Id	Archive	Collection	Fondsnaam	Unit_id	Dates	Title	Inventaris_tekst	Editie	Overige	Regesttekst	Links	Thumbnails	Thumbnaillabels"
+    csv_file.puts "						Dates"
+    csv_file.puts "Id	Archive	Collection	Fondsnaam	Unit_id	Level	normal	tekst	parsed	Title	Inventaris_tekst	Editie	Overige	Regesttekst	Links	Thumbnails	Thumbnaillabels"
 
     if multiple_archives.empty? && ( file_in.empty? || $archive.nil? || $collection.nil? )
 	puts "use: parser.rb -a archive -c collection -d output_dir -i file_in"
 	puts "the name of the output file(s) are derived from the archive and collection names"
 	puts "or"
-	puts "use: parser.rb -f description_file -x directory_with_xmls"
+	puts "use: parser.rb -f description file"
 	puts "In this description file a list of archives and collections can be defined which will be processed"
 	exit(1)
     end
+
+    $count_unit_dates = 0
+    $count_empty_date_normal = 0
+    $count_date_text_filled = 0
+    $count_parse_succes = 0
+    $count_date_text_long = 0
+    $count_parse_long_succes = 0
+    $count_date_text = 0
+    $count_parsed_dates = 0
 
     $record_id = 1
     $output_dir = "C:/git/timbuctoo-testdata/src/main/resources/import/charter" if $output_dir.empty?
@@ -675,7 +757,7 @@ if __FILE__ == $0
 			output_documents = "charterdocument.json"
 			output_relations = "charterrelation.json"
 #			debug = $collection.eql?("3.19.18")
-			Parser.parseFile(File.join(File.absolute_path(input_dir), file_in),output_documents,output_relations,csv_file,debug)
+			Parser.parseFile(file_in,output_documents,output_relations,csv_file,debug)
 		    else
 			STDERR.puts "regel #{line_nr} in #{multiple_archives} niet volledig"
 		    end
@@ -695,6 +777,20 @@ if __FILE__ == $0
 	Parser.parseFile(file_in,output_documents,output_relations,csv_file,debug)
     end
 
+    STDOUT.puts
+    STDOUT.puts "number of unitdates: #{$count_unit_dates}"
+    STDOUT.puts "number of empty fields 'normal': #{$count_empty_date_normal}"
+    STDOUT.puts "  in these:"
+    STDOUT.puts "  number of filled 'date texts': #{$count_date_text_filled}"
+    STDOUT.puts "  number of succesfully parsed dates: #{$count_parse_succes}"
+    STDOUT.puts "  number 'date texts' longer than 4 char: #{$count_date_text_long}"
+    STDOUT.puts "  number these succesfully parsed: #{$count_parse_long_succes}"
+    STDOUT.puts
+    STDOUT.puts "total number of filled 'date texts'#{$count_date_text}"
+    STDOUT.puts "total number succesfully parsed dates: #{$count_parsed_dates}"
+
+
     Timer.stop
 
 end
+
