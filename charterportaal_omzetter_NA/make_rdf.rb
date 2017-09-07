@@ -11,10 +11,6 @@ class Parser
   def Parser.parseFile(inputfilename,output_docs,output_rels,rdf_file,debug=false)
     file_docs = nil
     file_rels = nil
-    if !$testrun
-      file_docs = File.new("#{$output_dir}/#{output_docs}","a")
-      file_rels = File.new("#{$output_dir}/#{output_rels}","a")
-    end
     listener = MyListener.new(file_docs,file_rels,rdf_file,debug)
     source = File.new File.expand_path("downloads_161108/#{inputfilename}")
     file_date = source.mtime.strftime("%Y-%m-%d")
@@ -93,102 +89,32 @@ class MyListener
       # Wat nu tekstregest is wordt inventaristekst
       # Dus tekstregest blijft leeg
       # link met Institute voor samenstellen van url's
-      # local variables to build csv line:
+      # local variables to build rdf line:
       title = ""
-      full_title = ""
       inventaris_tekst = []
       overige = ""
-      regest_tekst = ""
-      links = ""
-      thumbnails = ""
-      thumbnaillabels = ""
-      #
       id = sprintf("CHAD%08d",$record_id)
-      put_out '{"@type":"charterdocument"'
-      put_out ',"_id":"' + id + '"'
-      put_out ',"archief":"' + $archive + '"'
-      put_out ',"fonds":"' + $collection + '"'
-      put_out ',"fondsNaam":"' + @fondsnaam + '"'
-      put_out ',"inventarisNummer":"' + @unit_id + '"'
-  
-      if !@dates[@level][0].empty?
-        put_out ",\"date\" : \"#{@dates[@level][0]}\""
-      elsif !@dates[@level][2].empty?
-        put_out ",\"date\" : \"#{@dates[@level][2]}\""
-      else # text in input; might be empty
-        put_out ",\"date\" : \"#{@dates[@level][1]}\""
-      end
   
       if @unit_title[@level].size<71
         title = "#{@unit_title[@level]}"
       else
         title = "#{@unit_title[@level][0..@unit_title[@level].rindex(' ',70)]}..."
       end
-      put_out ',"title" : "' + title + '"'
   
       (1..@level).each do |level|
         inventaris_tekst << "\"#{@unit_ids[level]}\""
         inventaris_tekst << "\"#{@unit_title[level]}\""
       end
-      put_out ',"inventaristekst" : [' + inventaris_tekst.join(',') + ']'
-      put_out ',"descriptionOfEditions" : "' + @editie + '"' if !@editie.empty?
   
       if !@overige.empty?
-        put_out ',"overige" : "'
         @overige.each_with_index do |overig,ind|
           overige += "</br>" if ind>0
           overige += overig.gsub(/"/,"\\\"").strip
         end
-        put_out overige + '"'
       end
   
-      if !@regest_tekst.empty?
-        put_out ',"tekstRegest" : '
-        regest_tekst = opschonen(@regest_tekst.join(' '))
-        put_out regest_tekst
-      end
-  
-      if !@links.empty?
-        put_out ',"links" : '
-        links = "["
-        @links.each_with_index do |link,ind|
-          links += "," if ind>0
-          links += '"' + link + '"'
-        end
-        links += "]"
-        put_out links
-      end
-  
-      if $thumbnails.has_key?(@unit_id)
-        put_out ',"thumbs" : '
-        thumbnails = "["
-        $thumbnails[@unit_id].each_with_index do |thumb,ind|
-          thumbnails += "," if ind>0
-          thumbnails += '"' + thumb + '"'
-        end
-        thumbnails += "]"
-        put_out thumbnails
-        put_out ',"thumbLabels" : ['
-        thumbnaillabels = "["
-        $thumbnaillabels[@unit_id].each_with_index do |thumb,ind|
-          thumbnaillabels += "," if ind>0
-          thumbnaillabels += '"' + thumb + '"'
-        end
-        thumbnaillabels += "]"
-        put_out thumbnaillabels
-      end
-  
-      put_out "}\n"
-  
-      if !$testrun
-        @output.flush
-        @rels_file.puts  '{"typeName":"isStoredAt","sourceType":"document","sourceValue":"' + id + '","targetType":"collective","targetValue":"' + $collective_id + '"}'
-      end
-
       $record_id += 1
 
-#      @rdf_file.puts "#{id}	#{$archive}	#{$collection}	#{@fondsnaam}	#{@unit_ids[@level]}	#{@level}	#{@dates[@level][0]}	#{@dates[@level][1]}	#{@dates[@level][2]}	#{title}	[#{inventaris_tekst.join(',')}]	#{@editie}	#{overige}	#{regest_tekst}	#{links}	#{thumbnails}	#{thumbnaillabels}"
-#      @rdf_file.puts "
       output_line = []
       id_part = "<#{$resource}/#{id}>"
       @rdf_file.puts "#{id_part} <#{$resource}/archive> \"#{$archive}\" ."
@@ -203,11 +129,12 @@ class MyListener
       @rdf_file.puts "#{id_part} <#{$resource}/inventaris_tekst> #{inventaris_tekst.join(',').to_json} ."
       @rdf_file.puts "#{id_part} <#{$resource}/editie> #{@editie.to_json} ." if !@editie.empty?
       @rdf_file.puts "#{id_part} <#{$resource}/overige> #{overige.to_json} ." if !@overige.empty?
-      @rdf_file.puts "#{id_part} <#{$resource}/regest_tekst> #{opschonen(@regest_tekst.join(' '),false).to_json} ."
-      STDERR.puts "#{@links} contains more than one link" if @links.size>1
+      @rdf_file.puts "#{id_part} <#{$resource}/regest_tekst> #{opschonen(@regest_tekst.join(' '),false).to_json} ." if !@regest_tekst.empty?
+
       @links.each do |link|
         @rdf_file.puts "#{id_part} <#{$resource}/links> <#{link}> ."
       end
+
       if $thumbnails.has_key?(@unit_id)
         $thumbnails[@unit_id].each_with_index do |thumb,ind|
           thumbnaillabel = $thumbnaillabels[@unit_id][ind]
@@ -215,9 +142,8 @@ class MyListener
           @rdf_file.puts "<#{$thumbnailserver}/#{thumb}> <http://www.w3.org/2000/01/rdf-schema#label> #{thumbnaillabel.to_json} ."
         end
       end
-#      @rdf_file.puts "#{id_part} <#{$resource}/thumbnails> #{thumbnails.to_json} ."
-#      @rdf_file.puts "#{id_part} <#{$resource}/thumbnaillabels> #{thumbnaillabels.to_json} ."
-      @rdf_file.puts
+
+#      @rdf_file.puts
 
     rescue => detail
       STDERR.puts detail
@@ -559,11 +485,6 @@ class MyListener
     return res
   end
   
-  def put_out( arg )
-    @output.write(arg) unless $testrun
-    arg
-  end
-
   def put_stderr text
     return if @unit_id.empty?
     if !@unit_id_printed
@@ -660,7 +581,7 @@ if __FILE__ == $0
 
   $thumbnails = Hash.new
   $thumbnaillabels = Hash.new
-  $testrun = false
+  $testrun = true
   multiple_archives = ""
   thumb_dir = ""
   rdf_file_name = ""
@@ -734,26 +655,10 @@ if __FILE__ == $0
   collectives = Array.new
   collective_id = 1
   output_institutes = "charterinstitute.json"
-  if !$testrun
-    collectives_file = File.new("#{$output_dir}/#{output_institutes}","w")
-    output_import_txt = File.new("#{$output_dir}/import.txt","w")
-    output_import_txt.puts "#{output_institutes};chartercollective"
-    output_import_txt.puts "charterdocument.json;charterdocument"
-#    output_import_txt.puts "charterrelation.json;charterrelation"
-    output_import_txt.close
-  end
 
   if !multiple_archives.empty?
     line_nr = 1
     archives = Array.new
-    if !$testrun
-      if File.exists?("#{$output_dir}/charterdocument.json")
-        File.delete("#{$output_dir}/charterdocument.json")
-      end
-        if File.exists?("#{$output_dir}/charterrelation.json")
-        File.delete("#{$output_dir}/charterrelation.json")
-      end
-    end
     File.open(multiple_archives) do |file|
       while line = file.gets
         if !line.strip.empty? && !line[0..0].eql?("#")
@@ -764,10 +669,6 @@ if __FILE__ == $0
             else
               collectives.insert(collective_id,$archive)
               $collective_id = sprintf("CHAC%08d",collectives.index($archive))
-              if !$testrun
-                collectives_file.puts '{"@type":"chartercollective","_id":"' +
-                  $collective_id + '","name":"' + $archive + '"}'
-              end
               collective_id += 1
             end
             thumbnails thumbs_dir
@@ -785,8 +686,7 @@ if __FILE__ == $0
   else
     thumbnails(thumb_dir) if !thumb_dir.empty?
     $collective_id = sprintf("CHAC%08d",collective_id)
-    collectives_file.puts '{"@type":"chartercollective","_id":"' + $collective_id +
-      '","name":"' + $archive + '"]}'
+
 #      '","name":"Nationaal Archief","links":["http://www.gahetna.nl"]}'
     output_relations = "charterrelation.json"
     output_documents = "charterdocument.json"
@@ -810,3 +710,4 @@ if __FILE__ == $0
   Timer.stop
 
 end
+
