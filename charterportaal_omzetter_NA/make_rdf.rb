@@ -102,8 +102,10 @@ class MyListener
       end
   
       (1..@level).each do |level|
-        inventaris_tekst << "\"#{@unit_ids[level]}\""
-        inventaris_tekst << "\"#{@unit_title[level]}\""
+#        inventaris_tekst << "\"#{@unit_ids[level]}\""
+#        inventaris_tekst << "\"#{@unit_title[level]}\""
+        inventaris_tekst << "#{@unit_ids[level]}"
+        inventaris_tekst << "#{@unit_title[level]}"
       end
   
       if !@overige.empty?
@@ -126,11 +128,12 @@ class MyListener
       @rdf_file.puts "#{id_part} <#{$resource}/dates_1> \"#{@dates[@level][1]}\" ."
       @rdf_file.puts "#{id_part} <#{$resource}/dates_2> \"#{@dates[@level][2]}\" ."
       @rdf_file.puts "#{id_part} <#{$resource}/title> #{title.to_json} ."
-      @rdf_file.puts "#{id_part} <#{$resource}/inventaris_tekst> #{inventaris_tekst.join(',').to_json} ."
+      @rdf_file.puts "#{id_part} <#{$resource}/inventaris_tekst> #{inventaris_tekst.join("\n\n").to_json} ."
       @rdf_file.puts "#{id_part} <#{$resource}/editie> #{@editie.to_json} ." if !@editie.empty?
       @rdf_file.puts "#{id_part} <#{$resource}/overige> #{overige.to_json} ." if !@overige.empty?
       @rdf_file.puts "#{id_part} <#{$resource}/regest_tekst> #{opschonen(@regest_tekst.join(' '),false).to_json} ." if !@regest_tekst.empty?
 
+      # until now never more than 1 link found
       @links.each do |link|
         @rdf_file.puts "#{id_part} <#{$resource}/links> <#{link}> ."
       end
@@ -181,7 +184,7 @@ class MyListener
 
   def unittitle__end
     @in_title = false
-    @unit_title[@level] = opschonen(@title)
+    @unit_title[@level] = opschonen(@title,false)
     if @in_fondsnaam
       @fondsnaam = @title.strip
       @in_fondsnaam = false
