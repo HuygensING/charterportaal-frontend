@@ -119,6 +119,11 @@ class MyListener
 
       output_line = []
       id_part = "<#{$resource}/#{id}>"
+
+#      <http://resources.huygens.knaw.nl/charterportal/CHAD00000001> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://resources.huygens.knaw.nl/charterportal/charter>
+
+      @rdf_file.puts "#{id_part} <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <#{$resource}/charter> ."
+      @rdf_file.puts "#{id_part} <#{$resource}/archive> \"#{$archive}\" ."
       @rdf_file.puts "#{id_part} <#{$resource}/archive> \"#{$archive}\" ."
       @rdf_file.puts "#{id_part} <#{$resource}/collection> \"#{$collection}\" ."
       @rdf_file.puts "#{id_part} <#{$resource}/fondsnaam> \"#{@fondsnaam}\" ."
