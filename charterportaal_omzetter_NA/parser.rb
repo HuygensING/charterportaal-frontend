@@ -1,3 +1,5 @@
+#!/usr/bin/env ruby
+
 require 'rexml/document'
 require 'rexml/streamlistener'
 require 'rubygems'
@@ -15,7 +17,7 @@ class Parser
             file_rels = File.new("#{$output_dir}/#{output_rels}","a")
         end
         listener = MyListener.new(file_docs,file_rels,csv_file,debug)
-        source = File.new File.expand_path("downloads_161108/#{inputfilename}")
+        source = File.new "/root/xmls/#{inputfilename}"
         file_date = source.mtime.strftime("%Y-%m-%d")
         STDOUT.puts "#{inputfilename} (#{file_date})"
         Document.parse_stream(source, listener)

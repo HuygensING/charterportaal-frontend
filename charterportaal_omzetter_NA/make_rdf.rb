@@ -1,3 +1,5 @@
+#!/usr/bin/env ruby
+
 require 'rexml/document'
 require 'rexml/streamlistener'
 require 'rubygems'
@@ -12,7 +14,7 @@ class Parser
     file_docs = nil
     file_rels = nil
     listener = MyListener.new(file_docs,file_rels,rdf_file,debug)
-    source = File.new File.expand_path("downloads_161108/#{inputfilename}")
+    source = File.new "xmls/#{inputfilename}"
     file_date = source.mtime.strftime("%Y-%m-%d")
     STDOUT.puts "#{inputfilename} (#{file_date})"
     Document.parse_stream(source, listener)
@@ -124,14 +126,13 @@ class MyListener
 
       @rdf_file.puts "#{id_part} <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <#{$resource}/charter> ."
       @rdf_file.puts "#{id_part} <#{$resource}/archive> \"#{$archive}\" ."
-      @rdf_file.puts "#{id_part} <#{$resource}/archive> \"#{$archive}\" ."
       @rdf_file.puts "#{id_part} <#{$resource}/collection> \"#{$collection}\" ."
       @rdf_file.puts "#{id_part} <#{$resource}/fondsnaam> \"#{@fondsnaam}\" ."
       @rdf_file.puts "#{id_part} <#{$resource}/unit_ids_#{@level}> \"#{@unit_ids[@level]}\" ."
       @rdf_file.puts "#{id_part} <#{$resource}/level> \"#{@level}\" ."
-      @rdf_file.puts "#{id_part} <#{$resource}/dates_0> \"#{@dates[@level][0]}\" ."
-      @rdf_file.puts "#{id_part} <#{$resource}/dates_1> \"#{@dates[@level][1]}\" ."
-      @rdf_file.puts "#{id_part} <#{$resource}/dates_2> \"#{@dates[@level][2]}\" ."
+      @rdf_file.puts "#{id_part} <#{$resource}/dates_0> \"#{@dates[@level][0]}\"^^<https://www.loc.gov/standards/datetime/pre-submission.html> ."
+      @rdf_file.puts "#{id_part} <#{$resource}/dates_1> \"#{@dates[@level][1]}\"^^<https://www.loc.gov/standards/datetime/pre-submission.html> ."
+      @rdf_file.puts "#{id_part} <#{$resource}/dates_2> \"#{@dates[@level][2]}\"^^<https://www.loc.gov/standards/datetime/pre-submission.html> ."
       @rdf_file.puts "#{id_part} <#{$resource}/title> #{title.to_json} ."
       @rdf_file.puts "#{id_part} <#{$resource}/inventaris_tekst> #{inventaris_tekst.join("\n\n").to_json} ."
       @rdf_file.puts "#{id_part} <#{$resource}/editie> #{@editie.to_json} ." if !@editie.empty?
@@ -140,17 +141,12 @@ class MyListener
 
       # until now never more than 1 link found
       @links.each do |link|
-        @rdf_file.puts "#{id_part} <#{$resource}/links> <#{link}> ."
+        @rdf_file.puts "#{id_part} <#{$resource}/links> \"#{link}\" ."
       end
 
-      if $thumbnails.has_key?(@unit_id)
-        $thumbnails[@unit_id].each_with_index do |thumb,ind|
-          thumbnaillabel = $thumbnaillabels[@unit_id][ind]
-          @rdf_file.puts "#{id_part} <http://xmlns.com/foaf/spec/#term_depiction> <#{$thumbnailserver}/#{thumb}> ."
-          @rdf_file.puts "<#{$thumbnailserver}/#{thumb}> <http://www.w3.org/2000/01/rdf-schema#label> #{thumbnaillabel.to_json} ."
-        end
-      end
-
+      @rdf_file.puts "#{id_part} <http://xmlns.com/foaf/spec/#term_depiction> \"#{$thumbnailserver}/#{$archive}_#{$collection}_#{@unit_ids[@level]}_R.jpg\" ."
+      @rdf_file.puts "#{id_part} <http://xmlns.com/foaf/spec/#term_depiction> \"#{$thumbnailserver}/#{$archive}_#{$collection}_#{@unit_ids[@level]}_V.jpg\" ."
+      
 #      @rdf_file.puts
 
     rescue => detail
@@ -594,7 +590,7 @@ if __FILE__ == $0
   thumb_dir = ""
   rdf_file_name = ""
   $resource = "http://resources.huygens.knaw.nl/charterportal"
-  $thumbnailserver = "http://thumbnails.huygens.knaw.nl"
+  $thumbnailserver = "http://test.resources.huygens.knaw.nl/charterportaal/images/"
   begin
   (0..(ARGV.size-1)).each do |i|
     case ARGV[i]

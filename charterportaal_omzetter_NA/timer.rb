@@ -1,3 +1,5 @@
+#!/usr/bin/env ruby
+
 module Timer
     @@begin_time = ""
 
